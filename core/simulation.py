@@ -19,6 +19,7 @@ class Simulation:
         else:
             self.env = simpy.Environment()
         self.world = World(self.env)
+        self.running = False
 
     def _setup_logging(self) -> None:
         os.makedirs("data", exist_ok=True)
@@ -38,7 +39,18 @@ class Simulation:
     def run(self):
         logging.info("Simulation running...")
         self.env.process(self._day_process())
+        self.running = True
         if self.days is not None:
             self.env.run(until=self.SECONDS_PER_DAY * self.days + 0.1)
         else:
             self.env.run()
+        self.running = False
+
+    def spawn_random_agent(self):
+        return self.world.spawn_random_agent()
+
+    def list_agents(self):
+        return self.world.list_agents()
+
+    def get_day(self) -> int:
+        return self.world.day
